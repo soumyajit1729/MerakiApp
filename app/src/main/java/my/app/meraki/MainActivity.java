@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -126,10 +127,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
             Toast.makeText(MainActivity.this, "code is sent!!!", Toast.LENGTH_SHORT).show();
-            /*code = phoneAuthCredential.getSmsCode();
+            code = phoneAuthCredential.getSmsCode();
             if(code!=null){
                 verifyCode(code);
-            }*/
+            }else {
+                signInWithCredential(phoneAuthCredential);
+            }
         }
 
         @Override
@@ -140,9 +143,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
             Toast.makeText(MainActivity.this, "sent", Toast.LENGTH_SHORT).show();
-            System.out.println(s);
+            Log.d("EUNOIA", "onCodeSent: "+s);
             super.onCodeSent(s, forceResendingToken);
             otp = s;
+        }
+
+        @Override
+        public void onCodeAutoRetrievalTimeOut(@NonNull String s) {
+            super.onCodeAutoRetrievalTimeOut(s);
         }
     };
 
@@ -156,7 +164,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
+                    final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    if(user != null){
+                        if(isReg.equals("true")){
+                            Intent intent = new Intent(MainActivity.this, WaitPage2.class);
+                            intent.putExtra("isReg", isReg);
+                            startActivity(intent);
+                            finish();
+                            return;
+                        }else{
+                            Intent intent = new Intent(MainActivity.this, WaitPage2.class);
+                            intent.putExtra("isReg", isReg);
+                            startActivity(intent);
+                            finish();
+                            return;
+                        }
 
+                    }
                 }
             }
         });

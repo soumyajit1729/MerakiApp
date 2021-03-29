@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.firebase.FirebaseApp;
+
 public class first extends AppCompatActivity {
     private Button msignup;
     @Override
@@ -16,7 +18,7 @@ public class first extends AppCompatActivity {
 
         msignup = (Button)findViewById(R.id.signup);
 
-
+        FirebaseApp.initializeApp(this.getApplicationContext());
         msignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
